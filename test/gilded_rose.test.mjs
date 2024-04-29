@@ -46,4 +46,16 @@ describe("Gilded Rose", () => {
     expect(items[0].quality).equal(4);
   });
 
+  test("If item is Sulfuras, Hand of Ragnaros. Quality stays the same.", () => {
+    const gildedRose = new Shop([new Item("Sulfuras, Hand of Ragnaros", 0, 1)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).equal(1);
+  })
+
+  test("If unknown item with quality over 50. Its quality gets lowered by two.", () => {
+    const gildedRose = new Shop([new Item("foo", 0, 51)]);
+    const items = gildedRose.updateQuality();
+    expect(items[0].quality).equal(49);
+  })
+
 });

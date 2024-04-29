@@ -1,4 +1,8 @@
 export class Item {
+  name: string;
+  sellIn: number;
+  quality: number;
+
   constructor(name, sellIn, quality) {
     this.name = name;
     this.sellIn = sellIn;
@@ -7,6 +11,7 @@ export class Item {
 }
 
 export class Shop {
+  items: Array<Item>;
   constructor(items = []) {
     this.items = items;
   }

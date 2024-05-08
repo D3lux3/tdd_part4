@@ -16,7 +16,7 @@ describe("Gilded Rose", () => {
     expect(items[0].quality).equal(1);
   });
 
-  test("Item quality gets lowered by three if sell in is negative", () => {
+  test("Item quality gets lowered by two if sell in is negative", () => {
     const gildedRose = new Shop([new Item("foo", -1, 3)]);
     const items = gildedRose.updateQuality();
     expect(items[0].quality).equal(1);

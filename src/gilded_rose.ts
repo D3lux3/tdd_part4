@@ -49,30 +49,18 @@ export class Shop {
     return backstagePass
   }
 
+  updateMiscItems(item: Item) {
+    const updated = { ...item, sellIn: item.sellIn - 1, quality: item.quality > 0 ? item.quality - 1 : item.quality };
+    return (updated.sellIn < 0 && updated.quality > 0) ? {...updated, quality: updated.quality - 1} : updated
+  }
+
+
   updateQuality() {
     const agedBries = this.items.filter((item) => item.name === "Aged Brie").map((agedBries) => this.updateAgedBrieQuality(agedBries));
     const backstagePasses = this.items.filter((item) => item.name === "Backstage passes to a TAFKAL80ETC concert").map((backstagePass) => this.updateBackstagePassQuality(backstagePass));
-    const rest = this.items.filter((item) => item.name !== "Aged Brie" && item.name !== "Backstage passes to a TAFKAL80ETC concert");
+    const handbooks = this.items.filter((item) => item.name === "Sulfuras, Hand of Ragnaros")
+    const miscs = this.items.filter((item) => item.name !== "Aged Brie" && item.name !== "Backstage passes to a TAFKAL80ETC concert" && item.name !== "Sulfuras, Hand of Ragnaros").map(item => this.updateMiscItems(item));
 
-    for (const item of rest) {
-      if (item.quality > 0) {
-        if (item.name != "Sulfuras, Hand of Ragnaros") {
-          item.quality = item.quality - 1;
-        }
-      }
-
-      if (item.name != "Sulfuras, Hand of Ragnaros") {
-        item.sellIn = item.sellIn - 1;
-      }
-      if (item.sellIn < 0) {
-        if (item.quality > 0) {
-          if (item.name != "Sulfuras, Hand of Ragnaros") {
-            item.quality = item.quality - 1;
-          }
-        }
-      }
-    }
-
-    return [...agedBries, ...backstagePasses, ...rest];
+    return [...agedBries, ...handbooks, ...backstagePasses, ...miscs];
   }
 }

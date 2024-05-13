@@ -21,32 +21,31 @@ export class Shop {
     this.items = items;
   }
 
+  private isQualityLess(quality) { return quality < 50 }
+
   private updateAgedBrieQuality(agedBries: Item) {
-    const firstUpdate = { ...agedBries, sellIn: agedBries.sellIn - 1, quality: agedBries.quality < 50 ? agedBries.quality + 1 : agedBries.quality }
-    if (firstUpdate.sellIn < 0 && firstUpdate.quality < 50) {
+    const firstUpdate = { ...agedBries, sellIn: agedBries.sellIn - 1, quality: this.isQualityLess(agedBries.quality) ? agedBries.quality + 1 : agedBries.quality }
+    if (firstUpdate.sellIn < 0 && this.isQualityLess(firstUpdate.quality)) {
       return { ...firstUpdate, quality: firstUpdate.quality + 1 };
     }
     return firstUpdate;
   }
 
+
   private updateBackstagePassQuality(backstagePass: Item) {
-    if (backstagePass.quality < 50) {
-      backstagePass.quality = backstagePass.quality + 1;
-      if (backstagePass.quality < 50) {
-        if (backstagePass.sellIn < 11) {
-          backstagePass.quality = backstagePass.quality + 1;
-        }
-        if (backstagePass.sellIn < 6) {
-          backstagePass.quality = backstagePass.quality + 1;
-        }
+    const firstUpdatedQuality = this.isQualityLess(backstagePass.quality) ? backstagePass.quality + 1 : backstagePass.quality;
+    const finalUpdatedSellIn = backstagePass.sellIn - 1;
+
+    if (this.isQualityLess(firstUpdatedQuality)) {
+      if (backstagePass.sellIn < 6) {
+        return {...backstagePass, sellIn: finalUpdatedSellIn, quality: finalUpdatedSellIn < 0 ? 0 : firstUpdatedQuality + 2 } 
+      }
+      if (backstagePass.sellIn < 11) {
+        return {...backstagePass, sellIn: finalUpdatedSellIn, quality: finalUpdatedSellIn < 0 ? 0 : firstUpdatedQuality + 1 } 
       }
     }
-    backstagePass.sellIn = backstagePass.sellIn - 1;
-    if (backstagePass.sellIn < 0) {
-      backstagePass.quality = 0;
-    }
-
-    return backstagePass
+    
+    return {...backstagePass, sellIn: finalUpdatedSellIn, quality: finalUpdatedSellIn < 0 ? 0: firstUpdatedQuality}
   }
 
   private updateMiscItems(item: Item) {

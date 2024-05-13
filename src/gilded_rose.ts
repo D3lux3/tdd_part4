@@ -22,16 +22,11 @@ export class Shop {
   }
 
   updateAgedBrieQuality(agedBries: Item) {
-    if (agedBries.quality < 50) {
-      agedBries.quality = agedBries.quality + 1;
+    const firstUpdate = { ...agedBries, sellIn: agedBries.sellIn - 1, quality: agedBries.quality < 50 ? agedBries.quality + 1 : agedBries.quality }
+    if (firstUpdate.sellIn < 0 && firstUpdate.quality < 50) {
+      return { ...firstUpdate, quality: firstUpdate.quality + 1 };
     }
-    agedBries.sellIn = agedBries.sellIn - 1;
-    if (agedBries.sellIn < 0) {
-      if (agedBries.quality < 50) {
-        agedBries.quality = agedBries.quality + 1;
-      }
-    }
-    return agedBries;
+    return firstUpdate;
   }
 
   updateBackstagePassQuality(backstagePass: Item) {

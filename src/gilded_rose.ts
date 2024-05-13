@@ -1,3 +1,7 @@
+const AGED_BRIE = "Aged Brie";
+const BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert";
+const SULFURAS = "Sulfuras, Hand of Ragnaros";
+
 export class Item {
   name: string;
   sellIn: number;
@@ -12,6 +16,7 @@ export class Item {
 
 export class Shop {
   items: Array<Item>;
+
   constructor(items = []) {
     this.items = items;
   }
@@ -51,16 +56,24 @@ export class Shop {
 
   updateMiscItems(item: Item) {
     const updated = { ...item, sellIn: item.sellIn - 1, quality: item.quality > 0 ? item.quality - 1 : item.quality };
-    return (updated.sellIn < 0 && updated.quality > 0) ? {...updated, quality: updated.quality - 1} : updated
+    return (updated.sellIn < 0 && updated.quality > 0) ? { ...updated, quality: updated.quality - 1 } : updated
   }
 
-
   updateQuality() {
-    const agedBries = this.items.filter((item) => item.name === "Aged Brie").map((agedBries) => this.updateAgedBrieQuality(agedBries));
-    const backstagePasses = this.items.filter((item) => item.name === "Backstage passes to a TAFKAL80ETC concert").map((backstagePass) => this.updateBackstagePassQuality(backstagePass));
-    const handbooks = this.items.filter((item) => item.name === "Sulfuras, Hand of Ragnaros")
-    const miscs = this.items.filter((item) => item.name !== "Aged Brie" && item.name !== "Backstage passes to a TAFKAL80ETC concert" && item.name !== "Sulfuras, Hand of Ragnaros").map(item => this.updateMiscItems(item));
+    return this.items.map((item) => {
+      switch (item.name) {
+        case AGED_BRIE:
+          return this.updateAgedBrieQuality(item);
 
-    return [...agedBries, ...handbooks, ...backstagePasses, ...miscs];
+        case BACKSTAGE_PASS:
+          return this.updateBackstagePassQuality(item);
+
+        case SULFURAS:
+          return item;
+
+        default:
+          return this.updateMiscItems(item);
+      }
+    })
   }
 }

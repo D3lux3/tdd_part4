@@ -69,7 +69,7 @@ export class Shop {
           return this.updateBackstagePassQuality(item);
 
         case SULFURAS:
-          return item;
+          return item; // Do nothing.
 
         default:
           return this.updateMiscItems(item);

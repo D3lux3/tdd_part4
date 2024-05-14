@@ -48,17 +48,17 @@ export class Shop {
     return {...backstagePass, sellIn: finalUpdatedSellIn, quality: finalUpdatedSellIn < 0 ? 0: firstUpdatedQuality}
   }
 
-  private updateItem(item: Item, qualityDegradeAmount: number) {
+  private updateItemQuality(item: Item, qualityDegradeAmount: number) {
     const updated = { ...item, sellIn: item.sellIn - 1, quality: item.quality > 0 ? item.quality - qualityDegradeAmount : item.quality };
     return (updated.sellIn < 0 && updated.quality > 0) ? { ...updated, quality: updated.quality - qualityDegradeAmount } : updated
   }
   
   private updateMiscItems(item: Item) {
-    return this.updateItem(item, 1);
+    return this.updateItemQuality(item, 1);
   }
 
   private updateConjured(conjured: Item) {
-    return this.updateItem(conjured, 2);
+    return this.updateItemQuality(conjured, 2);
   }
 
   updateQuality() {

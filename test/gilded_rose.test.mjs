@@ -136,4 +136,9 @@ describe("Gilded Rose", () => {
     expect(gildedRose.items).deep.equal([]);
   });
 
+  test("If item is Conjured quality degrades twice as fast", () => {
+      const gildedRose = new Shop([new Item("Conjured", 1, 2)])
+      const items = gildedRose.updateQuality();
+      expect(items[0].quality).equal(0);
+  })
 });

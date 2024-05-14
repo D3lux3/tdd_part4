@@ -1,7 +1,7 @@
 const AGED_BRIE = "Aged Brie";
 const BACKSTAGE_PASS = "Backstage passes to a TAFKAL80ETC concert";
 const SULFURAS = "Sulfuras, Hand of Ragnaros";
-
+const CONJURED = "Conjured";
 export class Item {
   name: string;
   sellIn: number;
@@ -44,13 +44,19 @@ export class Shop {
         return {...backstagePass, sellIn: finalUpdatedSellIn, quality: finalUpdatedSellIn < 0 ? 0 : firstUpdatedQuality + 1 } 
       }
     }
-    
+
     return {...backstagePass, sellIn: finalUpdatedSellIn, quality: finalUpdatedSellIn < 0 ? 0: firstUpdatedQuality}
   }
 
+  
   private updateMiscItems(item: Item) {
     const updated = { ...item, sellIn: item.sellIn - 1, quality: item.quality > 0 ? item.quality - 1 : item.quality };
     return (updated.sellIn < 0 && updated.quality > 0) ? { ...updated, quality: updated.quality - 1 } : updated
+  }
+
+  private updateConjured(conjured: Item) {
+    const updated = { ...conjured, sellIn: conjured.sellIn - 1, quality: conjured.quality > 0 ? conjured.quality - 2 : conjured.quality };
+    return (updated.sellIn < 0 && updated.quality > 0) ? { ...updated, quality: updated.quality - 2 } : updated
   }
 
   updateQuality() {
@@ -64,6 +70,9 @@ export class Shop {
 
         case SULFURAS:
           return item; // Do nothing.
+
+        case CONJURED:
+          return this.updateConjured(item);
 
         default:
           return this.updateMiscItems(item);

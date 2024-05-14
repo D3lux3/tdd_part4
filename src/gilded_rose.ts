@@ -21,14 +21,28 @@ export class Shop {
     this.items = items;
   }
 
-  private isQualityLessThanMax(quality) { return quality < 50 }
+  private isQualityLessThanMax(quality: number) { return quality < 50 }
+
+  private decreaseSellIn(item: Item) {
+    return {...item, sellIn: item.sellIn - 1};
+  }
+
+  private increaseItemQuality(item: Item) {
+    if (this.isQualityLessThanMax(item.quality)) {
+      return {...item, quality: item.quality + 1}
+    }
+    return {...item}
+  }
 
   private updateAgedBrieQuality(agedBries: Item) {
-    const firstUpdate = { ...agedBries, sellIn: agedBries.sellIn - 1, quality: this.isQualityLessThanMax(agedBries.quality) ? agedBries.quality + 1 : agedBries.quality }
-    if (firstUpdate.sellIn < 0 && this.isQualityLessThanMax(firstUpdate.quality)) {
-      return { ...firstUpdate, quality: firstUpdate.quality + 1 };
+    const decreasedSellIn = this.decreaseSellIn(agedBries);
+    const increasedItemQuality = this.increaseItemQuality(decreasedSellIn);
+
+    if (increasedItemQuality.sellIn < 0) {
+      return this.increaseItemQuality(increasedItemQuality);
     }
-    return firstUpdate;
+    
+    return increasedItemQuality;
   }
 
 

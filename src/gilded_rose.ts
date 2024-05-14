@@ -27,9 +27,9 @@ export class Shop {
     return {...item, sellIn: item.sellIn - 1};
   }
 
-  private increaseItemQuality(item: Item) {
+  private increaseItemQuality(item: Item, increaseBy: number = 1) {
     if (this.isQualityLessThanMax(item.quality)) {
-      return {...item, quality: item.quality + 1}
+      return {...item, quality: item.quality + increaseBy}
     }
     return {...item}
   }
@@ -41,25 +41,29 @@ export class Shop {
     if (increasedItemQuality.sellIn < 0) {
       return this.increaseItemQuality(increasedItemQuality);
     }
-    
+
     return increasedItemQuality;
   }
 
+  private updateBackstagePassQuality (pass: Item, increaseBy: number = 1) {
+    if (pass.sellIn < 0) {
+      return {...pass, quality: 0};
+    }
+    return this.increaseItemQuality(pass, increaseBy);
+  }
 
-  private updateBackstagePassQuality(backstagePass: Item) {
-    const firstUpdatedQuality = this.isQualityLessThanMax(backstagePass.quality) ? backstagePass.quality + 1 : backstagePass.quality;
-    const finalUpdatedSellIn = backstagePass.sellIn - 1;
-
-    if (this.isQualityLessThanMax(firstUpdatedQuality)) {
+  private updateBackstagePass(backstagePass: Item) {
+    const decreasedSellIn = this.decreaseSellIn(backstagePass);
+    const increasedItemQuality = this.increaseItemQuality(decreasedSellIn);
+    if (this.isQualityLessThanMax(increasedItemQuality.quality)) {
       if (backstagePass.sellIn < 6) {
-        return {...backstagePass, sellIn: finalUpdatedSellIn, quality: finalUpdatedSellIn < 0 ? 0 : firstUpdatedQuality + 2 } 
+        return this.updateBackstagePassQuality(increasedItemQuality, 2);
       }
       if (backstagePass.sellIn < 11) {
-        return {...backstagePass, sellIn: finalUpdatedSellIn, quality: finalUpdatedSellIn < 0 ? 0 : firstUpdatedQuality + 1 } 
+        return this.updateBackstagePassQuality(increasedItemQuality);
       }
     }
-
-    return {...backstagePass, sellIn: finalUpdatedSellIn, quality: finalUpdatedSellIn < 0 ? 0: firstUpdatedQuality}
+    return this.updateBackstagePassQuality(increasedItemQuality, 0);
   }
 
   private updateItemQuality(item: Item, qualityDegradeAmount: number) {
@@ -82,7 +86,7 @@ export class Shop {
           return this.updateAgedBrieQuality(item);
 
         case BACKSTAGE_PASS:
-          return this.updateBackstagePassQuality(item);
+          return this.updateBackstagePass(item);
 
         case SULFURAS:
           return item; // Do nothing.
